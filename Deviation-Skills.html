@@ -202,7 +202,7 @@
 
   // Build header row
   const thead = document.querySelector('thead tr');
-  fullSkillList.forEach(skill => {
+  fullSkillList.forEach((skill, index) => {
     const th = document.createElement('th');
     th.className = 'skill-header';
 
@@ -221,6 +221,28 @@
       // Unlisted skill → white background
       th.classList.add('unlisted-skill');
     }
+
+    // Add click handler to highlight rows
+    th.addEventListener('click', function() {
+      // Remove highlight from all rows
+      document.querySelectorAll('tbody tr').forEach(row => {
+        row.style.backgroundColor = '';
+        row.style.transition = 'background-color 0.3s ease';
+      });
+
+      // Highlight rows that have this skill
+      document.querySelectorAll('tbody tr').forEach((row, rowIndex) => {
+        const devName = row.children[0].textContent;
+        const devSkills = deviations[devName];
+        if (devSkills && devSkills.includes(skill)) {
+          row.style.backgroundColor = '#fffacd'; // Light yellow highlight
+          row.style.transition = 'background-color 0.3s ease';
+        }
+      });
+
+      // Optional: Show skill name in console or tooltip
+      console.log(`Clicked: ${skill}`);
+    });
 
     th.innerHTML = `<div class="rotated">${skill}</div>`;
     thead.appendChild(th);
@@ -250,4 +272,5 @@
 </script>
 
 </body>
+
 </html>
