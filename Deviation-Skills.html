@@ -9,6 +9,7 @@
       font-family: Arial, sans-serif;
       font-size: 12px;
       margin: 20px auto;
+      border: 1px solid #ccc;
     }
     th, td {
       border: 1px solid #ccc;
@@ -38,13 +39,13 @@
       text-align: left;
       font-weight: bold;
       padding: 8px;
-      font-size: 14px; /* Larger font */
+      font-size: 14px;
     }
     .check {
       background-color: #d0f0d0;
     }
     .shop-label {
-      font-size: 14px; /* Bigger shop text */
+      font-size: 14px;
       line-height: 1.3;
       text-align: center;
       padding: 4px 0;
@@ -74,6 +75,17 @@
     /* Unlisted skills = white background */
     .unlisted-skill {
       background-color: #fff;
+    }
+    
+    /* Highlight styles */
+    .skill-highlight {
+      background-color: #ffe0b2 !important;
+    }
+    .deviation-highlight {
+      background-color: #fff9c4 !important;
+    }
+    .overlap-highlight {
+      background-color: #e6f7e6 !important;
     }
   </style>
 </head>
@@ -137,7 +149,7 @@
     "Mini Wonder": ["Lightning","Pulse Orb","Elemental Overload","Blackhole Jet","Space Twister"],
     "Mr Wish": ["Space Twister","Weakspot Sniper","Resonant Skybound","Rapid Fire","Fate Coin","Self-Recharge"],
     "Nutcracker": ["Rapid Fire","Wild Shot","Chrysalis","Resist Death","Speed Up","Weakspot Sniper"],
-    "Orb Lightning": ["Electric Bullet","Lightning","Pulse Orb","Electrical Blast","Resonant Skybound"], // ✅ Updated!
+    "Orb Lightning": ["Electric Bullet","Lightning","Pulse Orb","Electrical Blast","Resonant Skybound"],
     "Paper Doll": ["Flame Bullet","Crystal Ambush","Pulse Orb","Lightning","Cryo Bullet","Flame Impact","Physical Shockwave"],
     "Party Monkey": ["Cyclone","Flame Bullet","Provoke","Flame Twister","Speed Up","Rapid Charge"],
     "Polar Jelly": ["Cryo Bullet","Frost Satellite","Crystal Ambush","Group Elemental Overload","Emergency Shield","Frost Vortex"],
@@ -222,26 +234,27 @@
       th.classList.add('unlisted-skill');
     }
 
-    // Add click handler to highlight rows
+    // Add click handler to highlight entire column
     th.addEventListener('click', function() {
-      // Remove highlight from all rows
-      document.querySelectorAll('tbody tr').forEach(row => {
-        row.style.backgroundColor = '';
-        row.style.transition = 'background-color 0.3s ease';
-      });
+      // Clear previous highlights
+      clearAllHighlights();
 
-      // Highlight rows that have this skill
-      document.querySelectorAll('tbody tr').forEach((row, rowIndex) => {
-        const devName = row.children[0].textContent;
-        const devSkills = deviations[devName];
-        if (devSkills && devSkills.includes(skill)) {
-          row.style.backgroundColor = '#fffacd'; // Light yellow highlight
-          row.style.transition = 'background-color 0.3s ease';
+      // Highlight this entire column with light orange
+      const allCellsInColumn = document.querySelectorAll(`tbody tr td:nth-child(${index + 2})`);
+      allCellsInColumn.forEach(cell => {
+        cell.classList.add('skill-highlight');
+        
+        // If this cell has a check mark, also highlight the entire row
+        if (cell.textContent === '✓') {
+          const row = cell.parentElement;
+          row.classList.add('deviation-highlight');
         }
       });
+      
+      // Also highlight the header
+      th.classList.add('skill-highlight');
 
-      // Optional: Show skill name in console or tooltip
-      console.log(`Clicked: ${skill}`);
+      console.log(`Clicked Skill: ${skill}`);
     });
 
     th.innerHTML = `<div class="rotated">${skill}</div>`;
@@ -250,11 +263,41 @@
 
   // Build rows
   const tbody = document.querySelector('tbody');
-  Object.entries(deviations).forEach(([deviation, devSkills]) => {
+  Object.entries(deviations).forEach(([deviation, devSkills], rowIndex) => {
     const row = document.createElement('tr');
     const devCell = document.createElement('td');
     devCell.className = 'deviation';
     devCell.textContent = deviation;
+
+    // Add click handler to highlight entire row + compatible skill columns
+    devCell.addEventListener('click', function() {
+      // Clear previous highlights
+      clearAllHighlights();
+
+      // Highlight this entire row with light yellow
+      row.classList.add('deviation-highlight');
+
+      // Highlight all compatible skill columns vertically
+      fullSkillList.forEach((skill, colIndex) => {
+        const normSkill = normalize(skill);
+        const normDevSkills = devSkills.map(s => normalize(s));
+        if (normDevSkills.includes(normSkill)) {
+          const th = thead.children[0].children[colIndex + 1]; // +1 because first is deviation header
+          if (th) {
+            th.classList.add('skill-highlight');
+          }
+          
+          // Highlight the entire column
+          const allCellsInColumn = document.querySelectorAll(`tbody tr td:nth-child(${colIndex + 2})`);
+          allCellsInColumn.forEach(cell => {
+            cell.classList.add('skill-highlight');
+          });
+        }
+      });
+
+      console.log(`Clicked Deviation: ${deviation}`);
+    });
+
     row.appendChild(devCell);
 
     fullSkillList.forEach(skill => {
@@ -269,9 +312,24 @@
     });
     tbody.appendChild(row);
   });
+
+  // Helper function to clear all highlights
+  function clearAllHighlights() {
+    // Clear all highlights
+    document.querySelectorAll('tbody tr').forEach(row => {
+      row.classList.remove('deviation-highlight');
+    });
+
+    document.querySelectorAll('tbody td').forEach(cell => {
+      cell.classList.remove('skill-highlight');
+      cell.classList.remove('deviation-highlight');
+      cell.classList.remove('overlap-highlight');
+    });
+
+    document.querySelectorAll('thead th.skill-header').forEach(th => {
+      th.classList.remove('skill-highlight');
+    });
+  }
 </script>
-
 </body>
-
 </html>
-
