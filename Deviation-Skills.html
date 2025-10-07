@@ -3,16 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Skill Mutagen by Deviation & Shop</title>
+  <!-- Add Quicksand Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    body {
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+      font-family: 'Quicksand', Arial, sans-serif;
+    }
+    
     table {
       border-collapse: collapse;
-      font-family: Arial, sans-serif;
+      font-family: 'Quicksand', Arial, sans-serif;
       font-size: 12px;
       margin: 20px auto;
-      border: 1px solid #ccc;
+      border: 1px solid #555;
     }
     th, td {
-      border: 1px solid #ccc;
+      border: 1px solid #555;
       text-align: center;
       padding: 4px;
       vertical-align: middle;
@@ -40,9 +48,20 @@
       font-weight: bold;
       padding: 8px;
       font-size: 14px;
+      background-color: #3a3a3a;
     }
     .check {
-      background-color: #d0f0d0;
+      background-color: #4a6a4a;
+      position: relative;
+    }
+    .circle {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #8bc34a;
+      border: 1px solid #6a983a;
+      box-sizing: border-box;
     }
     .shop-label {
       font-size: 14px;
@@ -51,41 +70,41 @@
       padding: 4px 0;
       font-weight: bold;
     }
-    .cat { color: #808080; }
-    .dino { color: #FF4500; }
-    .snow { color: #1E90FF; }
-    .wish { color: #FFA500; }
+    .cat { color: #aaa; }
+    .dino { color: #ff8c66; }
+    .snow { color: #66b2ff; }
+    .wish { color: #ffcc66; }
 
     /* Shop-specific skill header colors */
-    .cat-skill { background-color: rgba(128, 128, 128, 0.2); }
-    .dino-skill { background-color: rgba(255, 69, 0, 0.2); }
-    .snow-skill { background-color: rgba(30, 144, 255, 0.2); }
-    .wish-skill { background-color: rgba(255, 165, 0, 0.2); }
+    .cat-skill { background-color: rgba(170, 170, 170, 0.2); }
+    .dino-skill { background-color: rgba(255, 140, 102, 0.2); }
+    .snow-skill { background-color: rgba(102, 178, 255, 0.2); }
+    .wish-skill { background-color: rgba(255, 204, 102, 0.2); }
 
     /* Multi-shop skills get gradient */
     .multi-skill {
       background: linear-gradient(45deg, 
-        rgba(128,128,128,0.2), 
-        rgba(255,69,0,0.2), 
-        rgba(30,144,255,0.2), 
-        rgba(255,165,0,0.2)
+        rgba(170,170,170,0.2), 
+        rgba(255,140,102,0.2), 
+        rgba(102,178,255,0.2), 
+        rgba(255,204,102,0.2)
       );
     }
 
-    /* Unlisted skills = white background */
+    /* Unlisted skills = dark background */
     .unlisted-skill {
-      background-color: #fff;
+      background-color: #333;
     }
     
-    /* Highlight styles */
+    /* Highlight styles - updated to pink and purple with 50% transparency */
     .skill-highlight {
-      background-color: #ffe0b2 !important;
+      background-color: rgba(255, 105, 180, 0.5) !important; /* Pink with 50% opacity */
     }
     .deviation-highlight {
-      background-color: #fff9c4 !important;
+      background-color: rgba(147, 112, 219, 0.5) !important; /* Purple with 50% opacity */
     }
     .overlap-highlight {
-      background-color: #e6f7e6 !important;
+      background-color: #3a4d3a !important;
     }
     
     /* Top header styling */
@@ -94,8 +113,36 @@
       font-weight: bold;
       padding: 8px;
       text-align: left;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #555;
+      background-color: #3a3a3a;
     }
+    
+    /* Shop legend styling for A1 cell */
+    .shop-legend {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 0;
+      font-size: 12px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+    
+    .cat-legend { background: rgba(170, 170, 170, 0.3); }
+    .dino-legend { background: rgba(255, 140, 102, 0.3); }
+    .snow-legend { background: rgba(102, 178, 255, 0.3); }
+    .wish-legend { background: rgba(255, 204, 102, 0.3); }
   </style>
 </head>
 <body>
@@ -108,12 +155,23 @@
   <thead>
     <tr>
       <th class="deviation">
-        <div class="shop-label">
-          <span class="cat">Shop</span><br>
-          <span class="cat">1. Cat</span><br>
-          <span class="dino">2. Dino</span><br>
-          <span class="snow">3. Snow</span><br>
-          <span class="wish">4. Wish</span>
+        <div class="shop-legend">
+          <div class="legend-item">
+            <div class="legend-color cat-legend"></div>
+            <span>Cat Shop</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color dino-legend"></div>
+            <span>Dino Shop</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color snow-legend"></div>
+            <span>Snow Shop</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color wish-legend"></div>
+            <span>Wish Shop</span>
+          </div>
         </div>
       </th>
       <!-- Skill headers will be inserted here -->
@@ -243,7 +301,7 @@
     } else if (shopClasses.length === 1) {
       th.classList.add(...shopClasses);
     } else {
-      // Unlisted skill → white background
+      // Unlisted skill → dark background
       th.classList.add('unlisted-skill');
     }
 
@@ -252,13 +310,13 @@
       // Clear previous highlights
       clearAllHighlights();
 
-      // Highlight this entire column with light orange
+      // Highlight this entire column with pink (50% transparent)
       const allCellsInColumn = document.querySelectorAll(`tbody tr td:nth-child(${index + 2})`);
       allCellsInColumn.forEach(cell => {
         cell.classList.add('skill-highlight');
         
         // If this cell has a check mark, also highlight the entire row
-        if (cell.textContent === '✓') {
+        if (cell.querySelector('.circle')) {
           const row = cell.parentElement;
           row.classList.add('deviation-highlight');
         }
@@ -287,7 +345,7 @@
       // Clear previous highlights
       clearAllHighlights();
 
-      // Highlight this entire row with light yellow
+      // Highlight this entire row with purple (50% transparent)
       row.classList.add('deviation-highlight');
 
       // Highlight all compatible skill columns vertically
@@ -319,7 +377,7 @@
       const normDevSkills = devSkills.map(s => normalize(s));
       if (normDevSkills.includes(normSkill)) {
         cell.classList.add('check');
-        cell.textContent = '✓';
+        cell.innerHTML = '<div class="circle"></div>';
       }
       row.appendChild(cell);
     });
