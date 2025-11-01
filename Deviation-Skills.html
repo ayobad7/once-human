@@ -939,26 +939,46 @@
       function updateSearch() {
         const searchTerm = searchBox.value.toLowerCase().trim();
 
+        const thList = Array.from(
+          document.querySelectorAll('thead th.skill-header')
+        );
+        const thSkillNames = thList.map((th) =>
+          th.querySelector('.rotated').textContent.toLowerCase()
+        );
+
+        // Helper to toggle visibility classes
+        const setVisible = (el, visible) => {
+          if (visible) {
+            el.classList.remove('search-hidden');
+            el.classList.add('search-visible');
+          } else {
+            el.classList.remove('search-visible');
+            el.classList.add('search-hidden');
+          }
+        };
+
         if (!searchTerm) {
-          // If search is empty, show everything
-          document.querySelectorAll('tbody tr').forEach((row) => {
-            row.classList.remove('search-hidden');
-            row.classList.add('search-visible');
-          });
-          document.querySelectorAll('thead th.skill-header').forEach((th) => {
-            th.classList.remove('search-hidden');
-            th.classList.add('search-visible');
-          });
+          // Reset: show all rows and all skill columns
+          document
+            .querySelectorAll('tbody tr')
+            .forEach((row) => setVisible(row, true));
+          thList.forEach((th) => setVisible(th, true));
           return;
         }
 
-        // Check each deviation
+        // 1) Establish whether this is a skill-centric query (at least one header matches)
+        const skillNameDirectMatches = new Set(
+          thSkillNames.filter((n) => n.includes(searchTerm))
+        );
+        const isSkillQuery = skillNameDirectMatches.size > 0;
+
+        // 2) Filter rows (deviations)
         document.querySelectorAll('tbody tr').forEach((row) => {
           const deviationCell = row.querySelector('td.deviation');
           const deviationName = deviationCell.textContent.toLowerCase();
 
           // Get all skills this deviation has
-          const hasSkills = Array.from(row.querySelectorAll('td .circle')).map(
+          const rowSkills = Array.from(row.querySelectorAll('td .circle')).map(
             (circle) => {
               const colIndex = circle.closest('td').cellIndex;
               return thead
@@ -967,35 +987,49 @@
             }
           );
 
-          // Show row if deviation name or any of its skills match
-          const matches =
-            deviationName.includes(searchTerm) ||
-            hasSkills.some((skill) => skill.includes(searchTerm));
+          const matchesDeviation = deviationName.includes(searchTerm);
+          const matchesSkillLoose = rowSkills.some((s) =>
+            s.includes(searchTerm)
+          );
+          const matchesSkillDirect = rowSkills.some((s) =>
+            skillNameDirectMatches.has(s)
+          );
 
-          if (matches) {
-            row.classList.remove('search-hidden');
-            row.classList.add('search-visible');
+          // If searching a skill, narrow rows to only those that have the matched skill(s)
+          if (isSkillQuery) {
+            setVisible(row, matchesSkillDirect || matchesDeviation);
           } else {
-            row.classList.remove('search-visible');
-            row.classList.add('search-hidden');
+            // Deviation-first behavior: show rows if deviation name or any skill loosely matches
+            setVisible(row, matchesDeviation || matchesSkillLoose);
           }
         });
 
-        // Check each skill header
-        document.querySelectorAll('thead th.skill-header').forEach((th) => {
-          const skillName = th
-            .querySelector('.rotated')
-            .textContent.toLowerCase();
-          const matches = skillName.includes(searchTerm);
-
-          if (matches) {
-            th.classList.remove('search-hidden');
-            th.classList.add('search-visible');
-          } else {
-            th.classList.remove('search-visible');
-            th.classList.add('search-hidden');
-          }
+        // 3) Decide which skill headers to keep based on the search term and visible rows
+        // Skills used by currently visible rows
+        const visibleSkillSet = new Set();
+        document.querySelectorAll('tbody tr.search-visible').forEach((row) => {
+          Array.from(row.querySelectorAll('td .circle')).forEach((circle) => {
+            const colIndex = circle.closest('td').cellIndex; // 0-based for TD
+            const skillName = thead
+              .querySelector(`th:nth-child(${colIndex + 1}) .rotated`)
+              .textContent.toLowerCase();
+            visibleSkillSet.add(skillName);
+          });
         });
+
+        if (isSkillQuery) {
+          // Skill-centric: keep only the directly matched skill columns
+          thList.forEach((th, i) => {
+            const name = thSkillNames[i];
+            setVisible(th, skillNameDirectMatches.has(name));
+          });
+        } else {
+          // Deviation-centric: keep the skills used by the visible rows (narrow to what's relevant)
+          thList.forEach((th, i) => {
+            const name = thSkillNames[i];
+            setVisible(th, visibleSkillSet.has(name));
+          });
+        }
       }
 
       // Add search event listener with debouncing
