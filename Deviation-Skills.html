@@ -1,408 +1,1009 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Skill Mutagen by Deviation & Shop</title>
-  <!-- Add Quicksand Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: #2c2c2c;
-      color: #e0e0e0;
-      font-family: 'Quicksand', Arial, sans-serif;
-    }
-    
-    table {
-      border-collapse: collapse;
-      font-family: 'Quicksand', Arial, sans-serif;
-      font-size: 12px;
-      margin: 20px auto;
-      border: 1px solid #555;
-    }
-    th, td {
-      border: 1px solid #555;
-      text-align: center;
-      padding: 4px;
-      vertical-align: middle;
-    }
-    th.skill-header {
-      height: 200px;
-      width: 24px;
-      vertical-align: bottom;
-      position: relative;
-      padding: 0;
-    }
-    .rotated {
-      writing-mode: vertical-lr;
-      transform: rotate(180deg);
-      white-space: nowrap;
-      font-weight: normal;
-      display: block;
-      padding: 6px 4px;
-      text-align: center;
-      font-size: 11px;
-    }
-    th.deviation {
-      width: 140px;
-      text-align: left;
-      font-weight: bold;
-      padding: 8px;
-      font-size: 14px;
-      background-color: #3a3a3a;
-    }
-    .check {
-      background-color: #4a6a4a;
-      position: relative;
-    }
-    .circle {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background-color: #8bc34a;
-      border: 1px solid #6a983a;
-      box-sizing: border-box;
-    }
-    .shop-label {
-      font-size: 14px;
-      line-height: 1.3;
-      text-align: center;
-      padding: 4px 0;
-      font-weight: bold;
-    }
-    .cat { color: #aaa; }
-    .dino { color: #ff8c66; }
-    .snow { color: #66b2ff; }
-    .wish { color: #ffcc66; }
-
-    /* Shop-specific skill header colors */
-    .cat-skill { background-color: rgba(170, 170, 170, 0.2); }
-    .dino-skill { background-color: rgba(255, 140, 102, 0.2); }
-    .snow-skill { background-color: rgba(102, 178, 255, 0.2); }
-    .wish-skill { background-color: rgba(255, 204, 102, 0.2); }
-
-    /* Multi-shop skills get gradient */
-    .multi-skill {
-      background: linear-gradient(45deg, 
-        rgba(170,170,170,0.2), 
-        rgba(255,140,102,0.2), 
-        rgba(102,178,255,0.2), 
-        rgba(255,204,102,0.2)
-      );
-    }
-
-    /* Unlisted skills = dark background */
-    .unlisted-skill {
-      background-color: #333;
-    }
-    
-    /* Highlight styles - updated to pink and purple with 50% transparency */
-    .skill-highlight {
-      background-color: rgba(255, 105, 180, 0.5) !important; /* Pink with 50% opacity */
-    }
-    .deviation-highlight {
-      background-color: rgba(147, 112, 219, 0.5) !important; /* Purple with 50% opacity */
-    }
-    .overlap-highlight {
-      background-color: #3a4d3a !important;
-    }
-    
-    /* Top header styling */
-    .top-header {
-      font-size: 14px;
-      font-weight: bold;
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #555;
-      background-color: #3a3a3a;
-    }
-    
-    /* Shop legend styling for A1 cell */
-    .shop-legend {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 8px 0;
-      font-size: 12px;
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-    }
-    
-    .cat-legend { background: rgba(170, 170, 170, 0.3); }
-    .dino-legend { background: rgba(255, 140, 102, 0.3); }
-    .snow-legend { background: rgba(102, 178, 255, 0.3); }
-    .wish-legend { background: rgba(255, 204, 102, 0.3); }
-  </style>
-</head>
-<body>
-
-<div style="margin: 20px 0;">
-  <div class="top-header">Data Compiled by u/Setarius of Reddit</div>
-</div>
-
-<table>
-  <thead>
-    <tr>
-      <th class="deviation">
-        <div class="shop-legend">
-          <div class="legend-item">
-            <div class="legend-color cat-legend"></div>
-            <span>Cat Shop</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color dino-legend"></div>
-            <span>Dino Shop</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color snow-legend"></div>
-            <span>Snow Shop</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color wish-legend"></div>
-            <span>Wish Shop</span>
-          </div>
-        </div>
-      </th>
-      <!-- Skill headers will be inserted here -->
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Rows will be inserted here -->
-  </tbody>
-</table>
-
-<script>
-  // ✅ STEP 1: DEFINE DEVIATIONS FIRST (BEFORE USING THEM)
-  const deviations = {
-    "Atomic Lighter": ["Flame Bullet","Rite of Strength","Elemental Overload","Energy Conduit","Speed Up","Group Elemental Overload","Flame Impact","Incendiary Bullet"],
-    "Atomic Snail": ["Cryo Bullet","Energy Conduit","Elemental Overload","Lightning Pierce","Crystal Ambush"],
-    "Butterfly Emmissary": ["Savage Strike","Dodge","Resonant Skybound"],
-    "Buzzy Bee": ["Psi Bullet","Rapid Charge","Healing Bullet","Healing Aura","Cyclone"],
-    "By-the-Wind": ["Psi Bullet","Psi Ray","Group Physical Enhancement","Cyclone","Heavy Pressure","Penetrating Charge"],
-    "Chaos Extradimensional Cat": ["Charging Aura","Sweep","Kitty Punch","Rapid Charge","Heavy Pressure","Charge"],
-    "Chaos Pyro Dino": ["Flaming Flight","Burn Aura","Speed Up","Flame Jet","Incendiary Bullet","Meteor"],
-    "Chaos Snows Sprite": ["Elemental Overload","Cryo Bullet","Ice Crystal Barrage","Frost Satellite","Speed Up","Ice Crystal Ambush"],
-    "Chaos Mr Wish": ["Space Twister","Weakspot Sniper","Resonant Skybound","Rapid Fire","Fate Coin","Self-Recharge"],
-    "Digby Boy": ["Savage Strike","Provoke","Chrysalis","Heavy Pressure","Charge","Shield"],
-    "Disco Ball": ["Psi Bullet","Resonant Skybound","Energy Conduit","Weakspot Sniper","Healing Link","Healing Bullet"],
-    "Dr-Teddy": ["Savage Strike","Rapid Charge","Healing","Healing Bullet","Charge","Healing Aura"],
-    "Dreamcatcher": ["Cyclone","Dodge","Rapid Charge","Resonant Skybound","Mesh Traction","Space Twister"],
-    "Electric Eel": ["Electric Bullet","Lightning","Rapid Charge","Lightning Pierce","Elemental Overload","Electrical Blast"],
-    "Enchanting Void": ["Dodge","Space Twister","Resist Death","Psi Bullet","Intimidation"],
-    "Festering Gel": ["Psi Bullet","Healing Bullet","Healing Aura","Chrysalis","Heavy Pressure"],
-    "Fetch-lot-Bunny": ["Savage Strike","Provoke","Healing","Rush","Resist Death","Charge","Chrysalis"],
-    "Flame Essence": ["Flame Bullet","Burn Aura","Self-Recharge","Dodge","Flame Impact","Incendiary Bullet"],
-    "Frog the Leaper": ["Savage Strike","Provoke","Chrysalis","Charge","Whirlwind Slash","Heavy Pressure"],
-    "Gazocchio": ["Psi Bullet","Physical Enhancement","Physical Shockwave","Psi Ray"],
-    "Gingerbread House": ["Psi Bullet","Rapid Charge","Dodge","Chrysalis","Cyclone","Black Cat's Gaze","Corrosion Aura"],
-    "Growthshroom": ["Savage Strike","Provoke","Chrysalis","Shield","Whirlwind Slash","Heavy Pressure","Resist Death"],
-    "Grumpy Bulb": ["Psi Bullet","Rush","Space Twister","Charge","Wild Shot","Resist Death","Chrysalis"],
-    "Hydronaut": ["Electric Bullet","Electrical Blast","Lightning Pierce","Self-Recharge","Lucky Light","Frost Vortex","Elemental Overload"],
-    "H37": ["Psi Bullet","Psi Ray","Shield","Chrysalis","Charge","Emergency Shield"],
-    "Ice Pot": ["Cryo Bullet","Provoke","Resist Death","Ice Crystal Ambush","Damage Link","Self-Healing"],
-    "Invincible Sun": ["Meteor","Flame Bullet","Elemental Overload","Charging Aura","Flame Impact"],
-    "Lethal Rabbit": ["Savage Strike","Blink","Blade Declaration","Sweep","Speed Up","Blink Strike"],
-    "Logging Beaver": ["Savage Strike","Chrysalis","Sweep","Penetrating Charge","Blink Strike","Beaver Combo"],
-    "Lonewolf Whisper": ["Savage Strike","Blink Strike","Physical Enhancement","Speed Up","Penetrating Charge","Sweep"],
-    "Masonic Pyramid": ["Electric Bullet","Speed Up","Lightning","Sugarcoated Shell","Torpedo","Pulse Orb","Group Elemental Overload","Electrical Blast"],
-    "Mini Feaster": ["Psi Bullet","Outer God’s Tentacle","Space Twister","Speed Up","Healing","Physical Enhancement"],
-    "Mini Wonder": ["Lightning","Pulse Orb","Elemental Overload","Blackhole Jet","Space Twister"],
-    "Mr Wish": ["Space Twister","Weakspot Sniper","Resonant Skybound","Rapid Fire","Fate Coin","Self-Recharge"],
-    "Nutcracker": ["Rapid Fire","Wild Shot","Chrysalis","Resist Death","Speed Up","Weakspot Sniper"],
-    "Orb Lightning": ["Electric Bullet","Lightning","Pulse Orb","Electrical Blast","Resonant Skybound"],
-    "Paper Doll": ["Flame Bullet","Crystal Ambush","Pulse Orb","Lightning","Cryo Bullet","Flame Impact","Physical Shockwave"],
-    "Party Monkey": ["Cyclone","Flame Bullet","Provoke","Flame Twister","Speed Up","Rapid Charge"],
-    "Polar Jelly": ["Cryo Bullet","Frost Satellite","Crystal Ambush","Group Elemental Overload","Emergency Shield","Frost Vortex"],
-    "Pup Buddy": ["Savage Strike","Rite of Strength","Super Flammable","Charge","Whirlwind Slash","Explosive"],
-    "Pyro Dino": ["Flaming Flight","Burn Aura","Speed Up","Flame Jet","Incendiary Bullet","Meteor"],
-    "Rainman": ["Cryo Bullet","Chrysalis","Resist Death","Rainy Peril"],
-    "Rebecca": ["Healing Bullet","Energy Conduit","Charging Aura","Group Elemental Overload","Group Physical Enhancement","Agni's Emissary"],
-    "Shattered Maiden": ["Psi Bullet","Psi Ray","Rapid Charge","Rite of Strength","Resist Death","Mesh Traction"],
-    "Snow Globe": ["Cryo Bullet","Frost Satellite","Rapid Charge","Ice Crystal Ambush","Lightning Pierce","Elemental Overload"],
-    "Space Turner": ["Psi Bullet","Energy Conduit","Resonant Skybound","Mesh Traction","Psi Ray","Space Twister"],
-    "Strange Door": ["Chrysalis","Pulse Ray","Provoke","Pulse Orb","Void Zone","Lightning Pierce"],
-    "Voodoo Doll": ["Psi Bullet","Mesh Traction","Speed Up","Resist Death","Corrosion Aura"],
-    "Zeno Purifier": ["Blink","Cyclone","Dodge","Sweep","Whirlwind Slash","Shadow Strike"]
-  };
-
-  // Define shops and their skills (from your earlier lists)
-  const shops = {
-    cat: [
-      "Savage Strike", "Psi Bullet", "Electric Bullet", "Chrysalis", "Physical Enhancement",
-      "Shield", "Sweep", "Rush", "Heavy Pressure", "Charging Aura", "Psi Ray", "Blink Strike",
-      "Blast", "Rite of Strength", "Self-Recharge", "Group Elemental Overload",
-      "Group Physical Enhancement", "Kitty Punch"
-    ],
-    dino: [
-      "Healing Bullet", "Flame Bullet", "Whirlwind Slash", "Lightning Pierce", "Penetration Charge",
-      "Incendiary Bullet", "Pulse Orb", "Flame Jet", "Speed Up", "Burn Aura", "Intimidation",
-      "Meteor", "Pulse Ray", "Frost Vortex", "Corrosion Aura", "Rain Arrow", "BBQ", "Flaming Flight"
-    ],
-    snow: [
-      "Cryo Bullet", "Self-Healing", "Elemental Overload", "Electrical Blast", "Wild Shot",
-      "Healing Link", "Cyclone", "Mesh Traction", "Flame Impact", "Emergency Shield",
-      "Ice Crystal Ambush", "Frost Satellite", "Ice Crystal Barrage", "Beaver Combo",
-      "Shadow Strike", "Outer God’s Tentacle", "Blade Declaration", "Super Flammable",
-      "Blackhole Jet", "Agni’s Emissary"
-    ],
-    wish: [
-      "Lightning", "Rapid Fire", "Weakspot Sniper", "Resist Death", "Healing Aura", "Deviant Energy Conduit",
-      "Dodge", "Provoke", "Blink", "Damage Link", "Resonant Skybound", "Space Twister", "Fate Coin",
-      "Void Zone", "Torpedo", "Black Cat’s Gaze", "Sugarcoated Shell", "Rainy Peril", "Lucky Light"
-    ]
-  };
-
-  // All unique skills across all shops
-  const allSkills = [...new Set([
-    ...shops.cat,
-    ...shops.dino,
-    ...shops.snow,
-    ...shops.wish
-  ])];
-
-  // Add ALL skills from deviation compatibility (even unlisted ones)
-  const allDevSkills = new Set();
-  Object.values(deviations).forEach(devSkills => {
-    devSkills.forEach(skill => allDevSkills.add(skill));
-  });
-
-  // Combine and deduplicate
-  const fullSkillList = [...new Set([...allSkills, ...Array.from(allDevSkills)])];
-
-  // Normalize skill name for matching
-  const normalize = (name) => name.trim();
-
-  // Build header row
-  const thead = document.querySelector('thead tr');
-  fullSkillList.forEach((skill, index) => {
-    const th = document.createElement('th');
-    th.className = 'skill-header';
-
-    // Determine which shops this skill belongs to
-    let shopClasses = [];
-    if (shops.cat.includes(skill)) shopClasses.push('cat-skill');
-    if (shops.dino.includes(skill)) shopClasses.push('dino-skill');
-    if (shops.snow.includes(skill)) shopClasses.push('snow-skill');
-    if (shops.wish.includes(skill)) shopClasses.push('wish-skill');
-
-    if (shopClasses.length > 1) {
-      th.classList.add('multi-skill');
-    } else if (shopClasses.length === 1) {
-      th.classList.add(...shopClasses);
-    } else {
-      // Unlisted skill → dark background
-      th.classList.add('unlisted-skill');
-    }
-
-    // Add click handler to highlight entire column
-    th.addEventListener('click', function() {
-      // Clear previous highlights
-      clearAllHighlights();
-
-      // Highlight this entire column with pink (50% transparent)
-      const allCellsInColumn = document.querySelectorAll(`tbody tr td:nth-child(${index + 2})`);
-      allCellsInColumn.forEach(cell => {
-        cell.classList.add('skill-highlight');
-        
-        // If this cell has a check mark, also highlight the entire row
-        if (cell.querySelector('.circle')) {
-          const row = cell.parentElement;
-          row.classList.add('deviation-highlight');
-        }
-      });
-      
-      // Also highlight the header
-      th.classList.add('skill-highlight');
-
-      console.log(`Clicked Skill: ${skill}`);
-    });
-
-    th.innerHTML = `<div class="rotated">${skill}</div>`;
-    thead.appendChild(th);
-  });
-
-  // Build rows
-  const tbody = document.querySelector('tbody');
-  Object.entries(deviations).forEach(([deviation, devSkills], rowIndex) => {
-    const row = document.createElement('tr');
-    const devCell = document.createElement('td');
-    devCell.className = 'deviation';
-    devCell.textContent = deviation;
-
-    // Add click handler to highlight entire row + compatible skill columns
-    devCell.addEventListener('click', function() {
-      // Clear previous highlights
-      clearAllHighlights();
-
-      // Highlight this entire row with purple (50% transparent)
-      row.classList.add('deviation-highlight');
-
-      // Highlight all compatible skill columns vertically
-      fullSkillList.forEach((skill, colIndex) => {
-        const normSkill = normalize(skill);
-        const normDevSkills = devSkills.map(s => normalize(s));
-        if (normDevSkills.includes(normSkill)) {
-          const th = thead.children[0].children[colIndex + 1]; // +1 because first is deviation header
-          if (th) {
-            th.classList.add('skill-highlight');
-          }
-          
-          // Highlight the entire column
-          const allCellsInColumn = document.querySelectorAll(`tbody tr td:nth-child(${colIndex + 2})`);
-          allCellsInColumn.forEach(cell => {
-            cell.classList.add('skill-highlight');
-          });
-        }
-      });
-
-      console.log(`Clicked Deviation: ${deviation}`);
-    });
-
-    row.appendChild(devCell);
-
-    fullSkillList.forEach(skill => {
-      const cell = document.createElement('td');
-      const normSkill = normalize(skill);
-      const normDevSkills = devSkills.map(s => normalize(s));
-      if (normDevSkills.includes(normSkill)) {
-        cell.classList.add('check');
-        cell.innerHTML = '<div class="circle"></div>';
+  <head>
+    <meta charset="UTF-8" />
+    <title>Skill Mutagen by Deviation & Shop</title>
+    <!-- Add Quicksand Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #2c2c2c;
+        color: #e0e0e0;
+        font-family: 'Quicksand', Arial, sans-serif;
       }
-      row.appendChild(cell);
-    });
-    tbody.appendChild(row);
-  });
 
-  // Helper function to clear all highlights
-  function clearAllHighlights() {
-    // Clear all highlights
-    document.querySelectorAll('tbody tr').forEach(row => {
-      row.classList.remove('deviation-highlight');
-    });
+      table {
+        border-collapse: collapse;
+        font-family: 'Quicksand', Arial, sans-serif;
+        font-size: 12px;
+        margin: 20px auto;
+        border: 1px solid #555;
+      }
+      th,
+      td {
+        border: 1px solid #555;
+        text-align: center;
+        padding: 4px;
+        vertical-align: middle;
+      }
+      th.skill-header {
+        height: 200px;
+        width: 24px;
+        vertical-align: bottom;
+        position: relative;
+        padding: 0;
+      }
+      .rotated {
+        writing-mode: vertical-lr;
+        transform: rotate(180deg);
+        white-space: nowrap;
+        font-weight: normal;
+        display: block;
+        padding: 6px 4px;
+        text-align: center;
+        font-size: 11px;
+      }
+      th.deviation {
+        width: 140px;
+        text-align: left;
+        font-weight: bold;
+        padding: 8px;
+        font-size: 14px;
+        background-color: #3a3a3a;
+      }
+      .check {
+        background-color: #4a6a4a;
+        position: relative;
+      }
+      .circle {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: #8bc34a;
+        border: 1px solid #6a983a;
+        box-sizing: border-box;
+      }
+      .shop-label {
+        font-size: 14px;
+        line-height: 1.3;
+        text-align: center;
+        padding: 4px 0;
+        font-weight: bold;
+      }
+      .cat {
+        color: #aaa;
+      }
+      .dino {
+        color: #ff8c66;
+      }
+      .snow {
+        color: #66b2ff;
+      }
+      .wish {
+        color: #ffcc66;
+      }
 
-    document.querySelectorAll('tbody td').forEach(cell => {
-      cell.classList.remove('skill-highlight');
-      cell.classList.remove('deviation-highlight');
-      cell.classList.remove('overlap-highlight');
-    });
+      /* Shop-specific skill header colors */
+      .cat-skill {
+        background-color: rgba(170, 170, 170, 0.2);
+      }
+      .dino-skill {
+        background-color: rgba(255, 140, 102, 0.2);
+      }
+      .snow-skill {
+        background-color: rgba(102, 178, 255, 0.2);
+      }
+      .wish-skill {
+        background-color: rgba(255, 204, 102, 0.2);
+      }
 
-    document.querySelectorAll('thead th.skill-header').forEach(th => {
-      th.classList.remove('skill-highlight');
-    });
-  }
-</script>
-</body>
+      /* Multi-shop skills get gradient */
+      .multi-skill {
+        background: linear-gradient(
+          45deg,
+          rgba(170, 170, 170, 0.2),
+          rgba(255, 140, 102, 0.2),
+          rgba(102, 178, 255, 0.2),
+          rgba(255, 204, 102, 0.2)
+        );
+      }
+
+      /* Unlisted skills = dark background */
+      .unlisted-skill {
+        background-color: #333;
+      }
+
+      /* Highlight styles - updated to pink and purple with 50% transparency */
+      .skill-highlight {
+        background-color: rgba(
+          255,
+          105,
+          180,
+          0.5
+        ) !important; /* Pink with 50% opacity */
+      }
+      .deviation-highlight {
+        background-color: rgba(
+          147,
+          112,
+          219,
+          0.5
+        ) !important; /* Purple with 50% opacity */
+      }
+      .overlap-highlight {
+        background-color: #3a4d3a !important;
+      }
+
+      /* Top header styling */
+      .top-header {
+        font-size: 14px;
+        font-weight: bold;
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #555;
+        background-color: #3a3a3a;
+      }
+
+      /* Shop legend styling for A1 cell */
+      .shop-legend {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px 0;
+        font-size: 12px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+      }
+
+      .cat-legend {
+        background: rgba(170, 170, 170, 0.3);
+      }
+      .dino-legend {
+        background: rgba(255, 140, 102, 0.3);
+      }
+      .snow-legend {
+        background: rgba(102, 178, 255, 0.3);
+      }
+      .wish-legend {
+        background: rgba(255, 204, 102, 0.3);
+      }
+
+      /* Search-related styles */
+      .search-hidden {
+        opacity: 0.2;
+        transition: opacity 0.2s ease-out;
+      }
+
+      .search-visible {
+        opacity: 1;
+        transition: opacity 0.2s ease-out;
+      }
+
+      #searchBox:focus {
+        outline: none;
+        border-color: #888;
+        box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div style="margin: 20px 0">
+      <!-- Removed: Data Compiled by u/Setarius of Reddit -->
+      <div
+        class="search-container"
+        style="margin: 20px auto; max-width: 600px; text-align: center"
+      >
+        <input
+          type="text"
+          id="searchBox"
+          placeholder="Search skills or deviations..."
+          style="
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 14px;
+            background: #3a3a3a;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-family: 'Quicksand', Arial, sans-serif;
+          "
+        />
+        <!-- Removed: Type to filter and instructions -->
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="deviation">
+            <div class="shop-legend">
+              <div class="legend-item">
+                <div class="legend-color cat-legend"></div>
+                <span>Cat Shop</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color dino-legend"></div>
+                <span>Dino Shop</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color snow-legend"></div>
+                <span>Snow Shop</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color wish-legend"></div>
+                <span>Wish Shop</span>
+              </div>
+            </div>
+          </th>
+          <!-- Skill headers will be inserted here -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be inserted here -->
+      </tbody>
+    </table>
+
+    <script>
+      // ✅ STEP 1: DEFINE DEVIATIONS FIRST (BEFORE USING THEM)
+      const deviations = {
+        'Atomic Lighter': [
+          'Flame Bullet',
+          'Rite of Strength',
+          'Elemental Overload',
+          'Energy Conduit',
+          'Speed Up',
+          'Group Elemental Overload',
+          'Flame Impact',
+          'Incendiary Bullet',
+        ],
+        'Atomic Snail': [
+          'Cryo Bullet',
+          'Energy Conduit',
+          'Deviant Energy Conduit',
+          'Elemental Overload',
+          'Lightning Pierce',
+          'Crystal Ambush',
+        ],
+        'Butterfly Emmissary': ['Savage Strike', 'Dodge', 'Resonant Skybound'],
+        'Buzzy Bee': [
+          'Psi Bullet',
+          'Rapid Charge',
+          'Healing Bullet',
+          'Healing Aura',
+          'Cyclone',
+        ],
+        'By-the-Wind': [
+          'Psi Bullet',
+          'Psi Ray',
+          'Group Physical Enhancement',
+          'Cyclone',
+          'Heavy Pressure',
+          'Penetrating Charge',
+        ],
+        'Chaos Extradimensional Cat': [
+          'Charging Aura',
+          'Sweep',
+          'Kitty Punch',
+          'Rapid Charge',
+          'Heavy Pressure',
+          'Charge',
+        ],
+        'Chaos Pyro Dino': [
+          'Flaming Flight',
+          'Burn Aura',
+          'Speed Up',
+          'Flame Jet',
+          'Incendiary Bullet',
+          'Meteor',
+        ],
+        'Chaos Snows Sprite': [
+          'Elemental Overload',
+          'Cryo Bullet',
+          'Ice Crystal Barrage',
+          'Frost Satellite',
+          'Speed Up',
+          'Ice Crystal Ambush',
+        ],
+        'Chaos Mr Wish': [
+          'Space Twister',
+          'Weakspot Sniper',
+          'Resonant Skybound',
+          'Rapid Fire',
+          'Fate Coin',
+          'Self-Recharge',
+        ],
+        'Digby Boy': [
+          'Savage Strike',
+          'Provoke',
+          'Chrysalis',
+          'Heavy Pressure',
+          'Charge',
+          'Shield',
+        ],
+        'Disco Ball': [
+          'Psi Bullet',
+          'Resonant Skybound',
+          'Energy Conduit',
+          'Weakspot Sniper',
+          'Healing Link',
+          'Healing Bullet',
+        ],
+        'Dr-Teddy': [
+          'Savage Strike',
+          'Rapid Charge',
+          'Healing',
+          'Healing Bullet',
+          'Charge',
+          'Healing Aura',
+        ],
+        Dreamcatcher: [
+          'Cyclone',
+          'Dodge',
+          'Rapid Charge',
+          'Resonant Skybound',
+          'Mesh Traction',
+          'Space Twister',
+        ],
+        'Electric Eel': [
+          'Electric Bullet',
+          'Lightning',
+          'Rapid Charge',
+          'Lightning Pierce',
+          'Elemental Overload',
+          'Electrical Blast',
+        ],
+        'Enchanting Void': [
+          'Dodge',
+          'Space Twister',
+          'Resist Death',
+          'Psi Bullet',
+          'Intimidation',
+        ],
+        'Festering Gel': [
+          'Psi Bullet',
+          'Healing Bullet',
+          'Healing Aura',
+          'Chrysalis',
+          'Heavy Pressure',
+        ],
+        'Fetch-lot-Bunny': [
+          'Savage Strike',
+          'Provoke',
+          'Healing',
+          'Rush',
+          'Resist Death',
+          'Charge',
+          'Chrysalis',
+        ],
+        'Flame Essence': [
+          'Flame Bullet',
+          'Burn Aura',
+          'Self-Recharge',
+          'Dodge',
+          'Flame Impact',
+          'Incendiary Bullet',
+        ],
+        'Frog the Leaper': [
+          'Savage Strike',
+          'Provoke',
+          'Chrysalis',
+          'Charge',
+          'Whirlwind Slash',
+          'Heavy Pressure',
+        ],
+        Gazocchio: [
+          'Psi Bullet',
+          'Physical Enhancement',
+          'Physical Shockwave',
+          'Psi Ray',
+        ],
+        'Gingerbread House': [
+          'Psi Bullet',
+          'Rapid Charge',
+          'Dodge',
+          'Chrysalis',
+          'Cyclone',
+          "Black Cat's Gaze",
+          'Corrosion Aura',
+        ],
+        Growthshroom: [
+          'Savage Strike',
+          'Provoke',
+          'Chrysalis',
+          'Shield',
+          'Whirlwind Slash',
+          'Heavy Pressure',
+          'Resist Death',
+        ],
+        'Grumpy Bulb': [
+          'Psi Bullet',
+          'Rush',
+          'Space Twister',
+          'Charge',
+          'Wild Shot',
+          'Resist Death',
+          'Chrysalis',
+        ],
+        Hydronaut: [
+          'Electric Bullet',
+          'Electrical Blast',
+          'Lightning Pierce',
+          'Self-Recharge',
+          'Lucky Light',
+          'Frost Vortex',
+          'Elemental Overload',
+        ],
+        H37: [
+          'Psi Bullet',
+          'Psi Ray',
+          'Shield',
+          'Chrysalis',
+          'Charge',
+          'Emergency Shield',
+        ],
+        'Ice Pot': [
+          'Cryo Bullet',
+          'Provoke',
+          'Resist Death',
+          'Ice Crystal Ambush',
+          'Damage Link',
+          'Self-Healing',
+        ],
+        'Invincible Sun': [
+          'Meteor',
+          'Flame Bullet',
+          'Elemental Overload',
+          'Charging Aura',
+          'Flame Impact',
+        ],
+        'Lethal Rabbit': [
+          'Savage Strike',
+          'Blink',
+          'Blade Declaration',
+          'Sweep',
+          'Speed Up',
+          'Blink Strike',
+        ],
+        'Logging Beaver': [
+          'Savage Strike',
+          'Chrysalis',
+          'Sweep',
+          'Penetrating Charge',
+          'Blink Strike',
+          'Beaver Combo',
+        ],
+        'Lonewolf Whisper': [
+          'Savage Strike',
+          'Blink Strike',
+          'Physical Enhancement',
+          'Speed Up',
+          'Penetrating Charge',
+          'Sweep',
+        ],
+        'Masonic Pyramid': [
+          'Electric Bullet',
+          'Speed Up',
+          'Lightning',
+          'Sugarcoated Shell',
+          'Torpedo',
+          'Pulse Orb',
+          'Group Elemental Overload',
+          'Electrical Blast',
+        ],
+        'Mini Feaster': [
+          'Psi Bullet',
+          'Outer God’s Tentacle',
+          'Space Twister',
+          'Speed Up',
+          'Healing',
+          'Physical Enhancement',
+        ],
+        'Mini Wonder': [
+          'Lightning',
+          'Pulse Orb',
+          'Elemental Overload',
+          'Blackhole Jet',
+          'Space Twister',
+        ],
+        'Mr Wish': [
+          'Space Twister',
+          'Weakspot Sniper',
+          'Resonant Skybound',
+          'Rapid Fire',
+          'Fate Coin',
+          'Self-Recharge',
+        ],
+        Nutcracker: [
+          'Rapid Fire',
+          'Wild Shot',
+          'Chrysalis',
+          'Resist Death',
+          'Speed Up',
+          'Weakspot Sniper',
+        ],
+        'Orb Lightning': [
+          'Electric Bullet',
+          'Lightning',
+          'Pulse Orb',
+          'Electrical Blast',
+          'Resonant Skybound',
+        ],
+        'Paper Doll': [
+          'Flame Bullet',
+          'Crystal Ambush',
+          'Pulse Orb',
+          'Lightning',
+          'Cryo Bullet',
+          'Flame Impact',
+          'Physical Shockwave',
+        ],
+        'Party Monkey': [
+          'Cyclone',
+          'Flame Bullet',
+          'Provoke',
+          'Flame Twister',
+          'Speed Up',
+          'Rapid Charge',
+        ],
+        'Polar Jelly': [
+          'Cryo Bullet',
+          'Frost Satellite',
+          'Crystal Ambush',
+          'Group Elemental Overload',
+          'Emergency Shield',
+          'Frost Vortex',
+        ],
+        'Pup Buddy': [
+          'Savage Strike',
+          'Rite of Strength',
+          'Super Flammable',
+          'Charge',
+          'Whirlwind Slash',
+          'Explosive',
+        ],
+        'Pyro Dino': [
+          'Flaming Flight',
+          'Burn Aura',
+          'Speed Up',
+          'Flame Jet',
+          'Incendiary Bullet',
+          'Meteor',
+        ],
+        Rainman: ['Cryo Bullet', 'Chrysalis', 'Resist Death', 'Rainy Peril'],
+        Rebecca: [
+          'Healing Bullet',
+          'Energy Conduit',
+          'Charging Aura',
+          'Group Elemental Overload',
+          'Group Physical Enhancement',
+          "Agni's Emissary",
+        ],
+        'Shattered Maiden': [
+          'Psi Bullet',
+          'Psi Ray',
+          'Rapid Charge',
+          'Rite of Strength',
+          'Resist Death',
+          'Mesh Traction',
+        ],
+        'Snow Globe': [
+          'Cryo Bullet',
+          'Frost Satellite',
+          'Rapid Charge',
+          'Ice Crystal Ambush',
+          'Lightning Pierce',
+          'Elemental Overload',
+        ],
+        'Space Turner': [
+          'Psi Bullet',
+          'Energy Conduit',
+          'Resonant Skybound',
+          'Mesh Traction',
+          'Psi Ray',
+          'Space Twister',
+        ],
+        'Strange Door': [
+          'Chrysalis',
+          'Pulse Ray',
+          'Provoke',
+          'Pulse Orb',
+          'Void Zone',
+          'Lightning Pierce',
+        ],
+        'Voodoo Doll': [
+          'Psi Bullet',
+          'Mesh Traction',
+          'Speed Up',
+          'Resist Death',
+          'Corrosion Aura',
+        ],
+        'Zeno Purifier': [
+          'Blink',
+          'Cyclone',
+          'Dodge',
+          'Sweep',
+          'Whirlwind Slash',
+          'Shadow Strike',
+        ],
+        Zapmander: [
+          'Electric Bullet',
+          'Lightning',
+          'Pulse Orb',
+          'Electrical Blast',
+          'Elemental Overload',
+          'Chain Lightning',
+        ],
+        Whalepup: [
+          'Cryo Bullet',
+          'Shield',
+          'Frost Vortex',
+          'Resist Death',
+          'Ice Crystal Ambush',
+          'Whale Invasion',
+        ],
+        'Director Fox': [
+          'Psi Bullet',
+          'Healing Bullet',
+          'Healing Aura',
+          'Healing Link',
+          'Group Physical Enhancement',
+          'Animal Expert',
+        ],
+        'Soul Summoner': [
+          'Cryo Bullet',
+          'Elemental Overload',
+          'Frost Vortex',
+          'Rain Arrow',
+          'Dodge',
+          'Arrow Storm',
+        ],
+        'Tar Pudding': [
+          'Flame Bullet',
+          'Elemental Overload',
+          'Incendiary Bullet',
+          'Burn Aura',
+          'Meteor',
+          'Crude Oil Spill',
+        ],
+        'Hug-in-a-Bowl': [
+          'Psi Bullet',
+          'Chrysalis',
+          'Heavy Pressure',
+          'Resonant Skybound',
+          'Rush',
+          'Self-Recharge',
+        ],
+        'Upper World Spawn': [
+          'Flame Bullet',
+          'Meteor',
+          'Pulse Ray',
+          'Burn Aura',
+          'Provoke',
+          'Upper World Protection',
+        ],
+      };
+
+      // Define shops and their skills (from your earlier lists)
+      const shops = {
+        cat: [
+          'Savage Strike',
+          'Psi Bullet',
+          'Electric Bullet',
+          'Chrysalis',
+          'Physical Enhancement',
+          'Shield',
+          'Sweep',
+          'Rush',
+          'Heavy Pressure',
+          'Charging Aura',
+          'Psi Ray',
+          'Blink Strike',
+          'Blast',
+          'Rite of Strength',
+          'Self-Recharge',
+          'Group Elemental Overload',
+          'Group Physical Enhancement',
+          'Chain Lightning',
+          'Kitty Punch',
+        ],
+        dino: [
+          'Healing Bullet',
+          'Flame Bullet',
+          'Whirlwind Slash',
+          'Lightning Pierce',
+          'Penetration Charge',
+          'Incendiary Bullet',
+          'Pulse Orb',
+          'Flame Jet',
+          'Speed Up',
+          'Burn Aura',
+          'Intimidation',
+          'Meteor',
+          'Pulse Ray',
+          'Frost Vortex',
+          'Corrosion Aura',
+          'Rain Arrow',
+          'BBQ',
+          'Flaming Flight',
+          'Animal Expert',
+          'Crude Oil Spill',
+        ],
+        snow: [
+          'Cryo Bullet',
+          'Self-Healing',
+          'Elemental Overload',
+          'Electrical Blast',
+          'Wild Shot',
+          'Healing Link',
+          'Cyclone',
+          'Mesh Traction',
+          'Flame Impact',
+          'Emergency Shield',
+          'Ice Crystal Ambush',
+          'Frost Satellite',
+          'Ice Crystal Barrage',
+          'Beaver Combo',
+          'Shadow Strike',
+          'Outer God’s Tentacle',
+          'Blade Declaration',
+          'Super Flammable',
+          'Blackhole Jet',
+          'Agni’s Emissary',
+          'Arrow Storm',
+        ],
+        wish: [
+          'Lightning',
+          'Rapid Fire',
+          'Weakspot Sniper',
+          'Resist Death',
+          'Healing Aura',
+          'Deviant Energy Conduit',
+          'Dodge',
+          'Provoke',
+          'Blink',
+          'Damage Link',
+          'Resonant Skybound',
+          'Space Twister',
+          'Fate Coin',
+          'Void Zone',
+          'Torpedo',
+          "Black Cat's Gaze",
+          'Sugarcoated Shell',
+          'Rainy Peril',
+          'Lucky Light',
+          'Whale Invasion',
+          'Upper World Protection',
+        ],
+      };
+
+      // All unique skills across all shops
+      const allSkills = [
+        ...new Set([...shops.cat, ...shops.dino, ...shops.snow, ...shops.wish]),
+      ];
+
+      // Add ALL skills from deviation compatibility (even unlisted ones)
+      const allDevSkills = new Set();
+      Object.values(deviations).forEach((devSkills) => {
+        devSkills.forEach((skill) => allDevSkills.add(skill));
+      });
+
+      // Combine and deduplicate
+      const fullSkillList = [
+        ...new Set([...allSkills, ...Array.from(allDevSkills)]),
+      ];
+
+      // Normalize skill name for matching
+      const normalize = (name) => name.trim();
+
+      // Build header row
+      const thead = document.querySelector('thead tr');
+      fullSkillList.forEach((skill, index) => {
+        const th = document.createElement('th');
+        th.className = 'skill-header';
+
+        // Determine which shops this skill belongs to
+        let shopClasses = [];
+        if (shops.cat.includes(skill)) shopClasses.push('cat-skill');
+        if (shops.dino.includes(skill)) shopClasses.push('dino-skill');
+        if (shops.snow.includes(skill)) shopClasses.push('snow-skill');
+        if (shops.wish.includes(skill)) shopClasses.push('wish-skill');
+
+        if (shopClasses.length > 1) {
+          th.classList.add('multi-skill');
+        } else if (shopClasses.length === 1) {
+          th.classList.add(...shopClasses);
+        } else {
+          // Unlisted skill → dark background
+          th.classList.add('unlisted-skill');
+        }
+
+        // Add click handler to highlight entire column
+        th.addEventListener('click', function () {
+          // Clear previous highlights
+          clearAllHighlights();
+
+          // Highlight this entire column with pink (50% transparent)
+          const allCellsInColumn = document.querySelectorAll(
+            `tbody tr td:nth-child(${index + 2})`
+          );
+          allCellsInColumn.forEach((cell) => {
+            cell.classList.add('skill-highlight');
+
+            // If this cell has a check mark, also highlight the entire row
+            if (cell.querySelector('.circle')) {
+              const row = cell.parentElement;
+              row.classList.add('deviation-highlight');
+            }
+          });
+
+          // Also highlight the header
+          th.classList.add('skill-highlight');
+
+          console.log(`Clicked Skill: ${skill}`);
+        });
+
+        th.innerHTML = `<div class="rotated">${skill}</div>`;
+        thead.appendChild(th);
+      });
+
+      // Build rows
+      const tbody = document.querySelector('tbody');
+      Object.entries(deviations).forEach(([deviation, devSkills], rowIndex) => {
+        const row = document.createElement('tr');
+        const devCell = document.createElement('td');
+        devCell.className = 'deviation';
+        devCell.textContent = deviation;
+
+        // Add click handler to highlight entire row + compatible skill columns
+        devCell.addEventListener('click', function () {
+          // Clear previous highlights
+          clearAllHighlights();
+
+          // Highlight this entire row with purple (50% transparent)
+          row.classList.add('deviation-highlight');
+
+          // Highlight all compatible skill columns vertically
+          fullSkillList.forEach((skill, colIndex) => {
+            const normSkill = normalize(skill);
+            const normDevSkills = devSkills.map((s) => normalize(s));
+            if (normDevSkills.includes(normSkill)) {
+              const th = thead.children[0].children[colIndex + 1]; // +1 because first is deviation header
+              if (th) {
+                th.classList.add('skill-highlight');
+              }
+
+              // Highlight the entire column
+              const allCellsInColumn = document.querySelectorAll(
+                `tbody tr td:nth-child(${colIndex + 2})`
+              );
+              allCellsInColumn.forEach((cell) => {
+                cell.classList.add('skill-highlight');
+              });
+            }
+          });
+
+          console.log(`Clicked Deviation: ${deviation}`);
+        });
+
+        row.appendChild(devCell);
+
+        fullSkillList.forEach((skill) => {
+          const cell = document.createElement('td');
+          const normSkill = normalize(skill);
+          const normDevSkills = devSkills.map((s) => normalize(s));
+          if (normDevSkills.includes(normSkill)) {
+            cell.classList.add('check');
+            cell.innerHTML = '<div class="circle"></div>';
+          }
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      });
+
+      // Helper function to clear all highlights
+      function clearAllHighlights() {
+        // Clear all highlights
+        document.querySelectorAll('tbody tr').forEach((row) => {
+          row.classList.remove('deviation-highlight');
+        });
+
+        document.querySelectorAll('tbody td').forEach((cell) => {
+          cell.classList.remove('skill-highlight');
+          cell.classList.remove('deviation-highlight');
+          cell.classList.remove('overlap-highlight');
+        });
+
+        document.querySelectorAll('thead th.skill-header').forEach((th) => {
+          th.classList.remove('skill-highlight');
+        });
+      }
+
+      // Search functionality
+      const searchBox = document.getElementById('searchBox');
+
+      function updateSearch() {
+        const searchTerm = searchBox.value.toLowerCase().trim();
+
+        if (!searchTerm) {
+          // If search is empty, show everything
+          document.querySelectorAll('tbody tr').forEach((row) => {
+            row.classList.remove('search-hidden');
+            row.classList.add('search-visible');
+          });
+          document.querySelectorAll('thead th.skill-header').forEach((th) => {
+            th.classList.remove('search-hidden');
+            th.classList.add('search-visible');
+          });
+          return;
+        }
+
+        // Check each deviation
+        document.querySelectorAll('tbody tr').forEach((row) => {
+          const deviationCell = row.querySelector('td.deviation');
+          const deviationName = deviationCell.textContent.toLowerCase();
+
+          // Get all skills this deviation has
+          const hasSkills = Array.from(row.querySelectorAll('td .circle')).map(
+            (circle) => {
+              const colIndex = circle.closest('td').cellIndex;
+              return thead
+                .querySelector(`th:nth-child(${colIndex + 1}) .rotated`)
+                .textContent.toLowerCase();
+            }
+          );
+
+          // Show row if deviation name or any of its skills match
+          const matches =
+            deviationName.includes(searchTerm) ||
+            hasSkills.some((skill) => skill.includes(searchTerm));
+
+          if (matches) {
+            row.classList.remove('search-hidden');
+            row.classList.add('search-visible');
+          } else {
+            row.classList.remove('search-visible');
+            row.classList.add('search-hidden');
+          }
+        });
+
+        // Check each skill header
+        document.querySelectorAll('thead th.skill-header').forEach((th) => {
+          const skillName = th
+            .querySelector('.rotated')
+            .textContent.toLowerCase();
+          const matches = skillName.includes(searchTerm);
+
+          if (matches) {
+            th.classList.remove('search-hidden');
+            th.classList.add('search-visible');
+          } else {
+            th.classList.remove('search-visible');
+            th.classList.add('search-hidden');
+          }
+        });
+      }
+
+      // Add search event listener with debouncing
+      let searchTimeout;
+      searchBox.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(updateSearch, 150); // Debounce for smooth typing
+      });
+    </script>
+  </body>
 </html>
-
-
